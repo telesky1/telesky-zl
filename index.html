@@ -362,6 +362,22 @@
   </div>
 
   <script>
+        // 预加载功能
+    const preloadedImages = [];
+
+    function preloadImages() {
+      const images = ['五色环电阻.png', '四色环电阻.png'];
+      images.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        preloadedImages.push(img);
+      });
+    }
+
+    window.onload = function () {
+      init();
+      preloadImages();
+    };
     // 定义颜色与数值的对应关系
     const colorCodes = [
       { color: '黑色', value: 0, multiplier: 1, tolerance: null, hex: '#000000' },
