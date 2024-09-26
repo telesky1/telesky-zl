@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<!--我们的店铺：https://telesky.tmall.com/?search=y&keyword=%B5%E7%D7%E8 天猫 Telesky旗舰店 -->
+
+<head>
+  <meta charset="UTF-8">
+  <title>电阻阻值查询器</title>
+  <link rel="icon" href="天士凯LOGO.png" type="image/png">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .top-banner {
+      width: 100%;
+      max-width: 990px;
+      margin: 0 auto;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .top-banner img {
+      max-width: 100%;
+      height: auto;
+      display: inline-block;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .upper-region {
+      display: flex;
+      flex-direction: column;
+      /* 设置为垂直方向排列 */
+      background-color: #fff;
+      padding: 30px 60px;
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      width: 1000px;
+      max-width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .panel-container {
+      display: flex;
+      flex-direction: row;
+      /* 水平方向排列 */
+      margin-top: 20px;
+      /* 标题与面板之间的间距 */
+    }
+
+    .left-panel {
+      flex: 1;
+      margin-right: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-panel {
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      /* 左对齐 */
+      min-height: 400px;
+      /* 设置最小高度，固定右侧面板高度 */
+      position: relative;
+      /* 为了定位子元素 */
+    }
+
+    .band-type {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .band-type label {
+      margin-right: 20px;
+      cursor: pointer;
+    }
+
+    .band-type input {
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
+    #color-selectors {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .color-selector {
+      position: relative;
+      width: 250px;
+      margin-bottom: 15px;
+    }
+
+    .color-selector .selected-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .color-selector .selected-option .color-box {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+
+    .color-selector .options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      z-index: 1;
+      display: none;
+    }
+
+    .color-selector .options .option {
+      display: flex;
+      align-items: center;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .color-selector .options .option:hover {
+      background-color: #f0f0f0;
+    }
+
+    .color-selector .options .option .color-box {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+
+    .result {
+      margin-top: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      white-space: pre-wrap;
+      text-align: center;
+      position: absolute;
+      /* 绝对定位 */
+      bottom: 150px;
+      /* 距离底部的距离 */
+      left: 0;
+      right: 0;
+    }
+
+    .value-to-color {
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      width: 1000px;
+      max-width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .value-to-color h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .value-to-color input,
+    .value-to-color select {
+      padding: 10px;
+      font-size: 16px;
+      margin-right: 10px;
+
+    }
+
+    .value-to-color select {
+      cursor: pointer;
+      /* 使下拉框在悬停时显示为手指形状 */
+    }
+
+    .value-to-color button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #bands-result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .resistor-image-container {
+      position: relative;
+      width: 300px;
+      height: 100px;
+      overflow: hidden;
+      margin-top: 20px;
+      margin: 100px auto;
+      /* 调整电阻图片的顶部间距 */
+    }
+
+    .resistor-image-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      position: relative;
+      z-index: 2;
+      /* 电阻图片位于上层 */
+    }
+
+    .band-overlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background-color: transparent;
+      z-index: 1;
+      /* 色环覆盖层位于下层 */
+    }
+
+    @media screen and (max-width: 768px) {
+      .upper-region {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .panel-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .left-panel {
+        margin-right: 0;
+      }
+
+      .right-panel {
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* 水平居中 */
+        justify-content: flex-start;
+        /* 内容从顶部开始排列 */
+      }
+
+      .content-area {
+        width: 90%;
+        padding: 20px;
+      }
+    }
+
+    /* 按钮容器样式 */
+    .button-container {
+      display: flex;
+      align-items: center;
+      margin-top: auto;
+      /* 将按钮容器推到父容器底部 */
+    }
+
+    /* 统一按钮样式 */
+    .button-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100px;
+      box-sizing: border-box;
+      /* 确保内边距和边框被计算在内 */
+    }
+
+    /* 为按钮之间添加间距 */
+    .button-container button+button {
+      margin-left: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-banner">
+    <a href="https://telesky.tmall.com/shop/view_shop.htm?tracelog=twddp&user_number_id=2207691322" target="_blank">
+      <img src="顶部LOGO.jpg" alt="Logo">
+    </a>
+  </div>
+  <!-- <h1>电阻阻值查询器</h1> -->
+
+  <div class="container">
+    <!-- 上部区域 -->
+    <div class="upper-region">
+      <!-- 标题 -->
+      <h2>电阻阻值查询器</h2>
+
+      <!-- 新增的面板容器 -->
+      <div class="panel-container">
+        <!-- 左侧区域：色环选择器 -->
+        <div class="left-panel">
+          <div class="band-type">
+            <label><input type="radio" name="band-count" value="4" checked onchange="updateBands()"> 四色环</label>
+            <label><input type="radio" name="band-count" value="5" onchange="updateBands()"> 五色环</label>
+          </div>
+
+          <div id="color-selectors">
+            <!-- 动态生成色环选择器 -->
+          </div>
+
+          <!-- 按钮容器 -->
+          <div class="button-container">
+            <!-- 选购按钮 -->
+            <button id="shop-button"
+              onclick="window.open('https://telesky.tmall.com/shop/view_shop.htm?tracelog=twddp&user_number_id=2207691322', '_blank')">选购</button>
+            <!-- 重置按钮 -->
+            <button id="reset-button" onclick="resetSelections()">重置</button>
+          </div>
+        </div>
+
+        <!-- 右侧区域：电阻图片和结果显示 -->
+        <div class="right-panel">
+          <div class="resistor-image-container" id="resistor-image-container">
+            <!-- 电阻图片和色环将显示在这里 -->
+          </div>
+          <div class="result" id="result-display">
+            <!-- 结果将显示在这里 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 阻值到色环计算 -->
+    <div class="value-to-color">
+      <h2>阻值转色环</h2>
+      <input type="number" id="resistance-input" placeholder="输入阻值">
+      <select id="unit-select">
+        <option value="1">Ω</option>
+        <option value="1000">kΩ</option>
+        <option value="1000000">MΩ</option>
+        <option value="1000000000">GΩ</option>
+      </select>
+      <button onclick="calculateBandsFromValue()">计算色环</button>
+      <div id="bands-result">
+        <!-- 色环结果将显示在这里 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 定义颜色与数值的对应关系
+    const colorCodes = [
+      { color: '黑色', value: 0, multiplier: 1, tolerance: null, hex: '#000000' },
+      { color: '棕色', value: 1, multiplier: 10, tolerance: 1, hex: '#8B4513' },
+      { color: '红色', value: 2, multiplier: 100, tolerance: 2, hex: '#FF0000' },
+      { color: '橙色', value: 3, multiplier: 1000, tolerance: null, hex: '#FFA500' },
+      { color: '黄色', value: 4, multiplier: 10000, tolerance: null, hex: '#FFFF00' },
+      { color: '绿色', value: 5, multiplier: 100000, tolerance: 0.5, hex: '#008000' },
+      { color: '蓝色', value: 6, multiplier: 1000000, tolerance: 0.25, hex: '#0000FF' },
+      { color: '紫色', value: 7, multiplier: 10000000, tolerance: 0.1, hex: '#800080' },
+      { color: '灰色', value: 8, multiplier: 100000000, tolerance: 0.05, hex: '#808080' },
+      { color: '白色', value: 9, multiplier: 1000000000, tolerance: null, hex: '#FFFFFF' },
+      { color: '金色', value: null, multiplier: 0.1, tolerance: 5, hex: '#FFD700' },
+      { color: '银色', value: null, multiplier: 0.01, tolerance: 10, hex: '#C0C0C0' },
+      { color: '无色', value: null, multiplier: null, tolerance: 20, hex: '#FFFFFF' }
+    ];
+
+    // 倍率色环选项（排除“无色”）
+    const multiplierColors = colorCodes.filter(c => c.multiplier !== null && c.color !== '无色');
+
+    // 初始化色环选择器
+    function init() {
+      updateBands();
+    }
+
+    // 更新色环选择器
+    function updateBands() {
+      const bandCount = parseInt(document.querySelector('input[name="band-count"]:checked').value);
+      const colorSelectorsDiv = document.getElementById('color-selectors');
+      colorSelectorsDiv.innerHTML = '';
+
+      const labels = bandCount === 4 ? ['色环 1', '色环 2', '倍率', '误差'] :
+        ['色环 1', '色环 2', '色环 3', '倍率', '误差'];
+
+      for (let i = 0; i < bandCount; i++) {
+        const selectorContainer = document.createElement('div');
+        selectorContainer.style.display = 'flex';
+        selectorContainer.style.flexDirection = 'row';
+        selectorContainer.style.alignItems = 'center';
+        selectorContainer.style.marginBottom = '15px';
+
+        const label = document.createElement('label');
+        label.innerText = labels[i] + '：';
+        label.style.width = '80px'; // 固定标签宽度
+        label.style.marginRight = '10px';
+
+        const selectorDiv = document.createElement('div');
+        selectorDiv.className = 'color-selector';
+
+        const selectedOption = document.createElement('div');
+        selectedOption.className = 'selected-option';
+        selectedOption.dataset.bandIndex = i;
+
+        const colorBox = document.createElement('div');
+        colorBox.className = 'color-box';
+        colorBox.style.backgroundColor = '#fff';
+
+        const colorName = document.createElement('span');
+        colorName.innerText = '请选择颜色';
+
+        const arrow = document.createElement('span');
+        arrow.innerHTML = '&#9662;';
+
+        selectedOption.appendChild(colorBox);
+        selectedOption.appendChild(colorName);
+        selectedOption.appendChild(arrow);
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options';
+
+        // 根据色环位置过滤可选颜色
+        let options = [];
+        if ((i === 2 && bandCount === 4) || (i === 3 && bandCount === 5)) {
+          // 倍率色环
+          options = multiplierColors;
+        } else if (i === bandCount - 1) {
+          // 误差色环
+          options = colorCodes.filter(c => c.tolerance !== null);
+        } else {
+          // 数字色环
+          options = colorCodes.filter(c => c.value !== null);
+        }
+
+        options.forEach(color => {
+          const optionDiv = document.createElement('div');
+          optionDiv.className = 'option';
+          optionDiv.dataset.colorName = color.color;
+          optionDiv.dataset.bandIndex = i;
+
+          const optionColorBox = document.createElement('div');
+          optionColorBox.className = 'color-box';
+          optionColorBox.style.backgroundColor = color.hex;
+
+          const optionColorName = document.createElement('span');
+          optionColorName.innerText = color.color;
+
+          optionDiv.appendChild(optionColorBox);
+          optionDiv.appendChild(optionColorName);
+
+          optionDiv.addEventListener('click', function () {
+            selectColor(this.dataset.bandIndex, this.dataset.colorName);
+            optionsDiv.style.display = 'none';
+          });
+
+          optionsDiv.appendChild(optionDiv);
+        });
+
+        selectedOption.addEventListener('click', function () {
+          optionsDiv.style.display = optionsDiv.style.display === 'block' ? 'none' : 'block';
+        });
+
+        selectorDiv.appendChild(selectedOption);
+        selectorDiv.appendChild(optionsDiv);
+
+        selectorContainer.appendChild(label);
+        selectorContainer.appendChild(selectorDiv);
+
+        colorSelectorsDiv.appendChild(selectorContainer);
+      }
+
+      // 更新电阻图片
+      updateResistorImage();
+
+      // 绑定事件
+      calculateFromColors();
+    }
+
+    // 更新电阻图片
+    function updateResistorImage() {
+      const resistorImageContainer = document.getElementById('resistor-image-container');
+      const bandCount = parseInt(document.querySelector('input[name="band-count"]:checked').value);
+
+      // 清空容器
+      resistorImageContainer.innerHTML = '';
+
+      // 首先，添加色环覆盖层
+      for (let i = 0; i < bandCount; i++) {
+        const bandOverlay = document.createElement('div');
+        bandOverlay.className = 'band-overlay';
+        bandOverlay.id = `band-overlay-${i}`;
+
+        // 根据色环位置设置样式
+        const positions = bandCount === 4
+          ? [
+            { left: '10%', width: '10%' }, // 色环1
+            { left: '25%', width: '10%' }, // 色环2
+            { left: '45%', width: '10%' }, // 倍率色环
+            { left: '80%', width: '10%' }  // 误差色环
+          ]
+          : [
+            { left: '10%', width: '10%' }, // 色环1
+            { left: '25%', width: '10%' }, // 色环2
+            { left: '35%', width: '10%' }, // 色环3
+            { left: '45%', width: '10%' }, // 倍率色环
+            { left: '80%', width: '10%' }  // 误差色环
+          ];
+
+        bandOverlay.style.left = positions[i].left;
+        bandOverlay.style.width = positions[i].width;
+        bandOverlay.style.height = '98%';
+        bandOverlay.style.top = '1%';
+        bandOverlay.style.position = 'absolute';
+
+        // 设置色环覆盖层的层叠顺序
+        bandOverlay.style.zIndex = '1';
+
+        resistorImageContainer.appendChild(bandOverlay);
+      }
+
+      // 然后，添加电阻图片
+      const imgElement = document.createElement('img');
+      imgElement.alt = '电阻图片';
+      imgElement.style.width = '100%';
+      imgElement.style.height = 'auto';
+      imgElement.style.display = 'block';
+
+      // 设置电阻图片的定位方式和层叠顺序
+      imgElement.style.position = 'relative';
+      imgElement.style.zIndex = '2';
+
+      // 设置图片源
+      imgElement.src = bandCount === 4
+        ? '四色环电阻.png' // <-- 四色环电阻图片链接
+        : '五色环电阻.png'; // <-- 五色环电阻图片链接
+
+      resistorImageContainer.appendChild(imgElement);
+    }
+
+    // 选择颜色
+    function selectColor(bandIndex, colorName) {
+      const bandSelectors = document.querySelectorAll('.color-selector');
+      const selectedOption = bandSelectors[bandIndex].querySelector('.selected-option');
+      const colorObj = colorCodes.find(c => c.color === colorName);
+
+      selectedOption.querySelector('.color-box').style.backgroundColor = colorObj.hex;
+      selectedOption.querySelector('span').innerText = colorName;
+
+      selectedOption.dataset.selectedColor = colorName;
+
+      // 更新电阻图片中的色环颜色
+      const bandOverlay = document.getElementById(`band-overlay-${bandIndex}`);
+      if (bandOverlay) {
+        bandOverlay.style.backgroundColor = colorObj.hex;
+      }
+
+      calculateFromColors();
+    }
+
+    // 从色环计算阻值
+    function calculateFromColors() {
+      const bandSelectors = document.querySelectorAll('.color-selector');
+      const bandCount = bandSelectors.length;
+
+      let digits = '';
+      let multiplier = 1;
+      let tolerance = '';
+
+      for (let i = 0; i < bandCount; i++) {
+        const selectedColorName = bandSelectors[i].querySelector('.selected-option').dataset.selectedColor;
+        if (!selectedColorName) {
+          document.getElementById('result-display').innerText = '请完整选择所有色环颜色';
+          return;
+        }
+
+        const colorObj = colorCodes.find(c => c.color === selectedColorName);
+
+        if ((i === 2 && bandCount === 4) || (i === 3 && bandCount === 5)) {
+          multiplier = colorObj.multiplier;
+        } else if (i === bandCount - 1) {
+          tolerance = colorObj.tolerance;
+        } else {
+          digits += colorObj.value.toString();
+        }
+      }
+
+      let resistanceValue = parseInt(digits) * multiplier;
+
+      // 阻值换算
+      let unit = 'Ω';
+      if (resistanceValue >= 1e9) {
+        resistanceValue = resistanceValue / 1e9;
+        unit = 'GΩ';
+      } else if (resistanceValue >= 1e6) {
+        resistanceValue = resistanceValue / 1e6;
+        unit = 'MΩ';
+      } else if (resistanceValue >= 1e3) {
+        resistanceValue = resistanceValue / 1e3;
+        unit = 'kΩ';
+      }
+
+      resistanceValue = resistanceValue.toFixed(2);
+      document.getElementById('result-display').innerText = `${resistanceValue} ${unit}   ±${tolerance}%`;
+    }
+
+    // 重置选择
+    function resetSelections() {
+      const bandSelectors = document.querySelectorAll('.color-selector');
+      bandSelectors.forEach(selector => {
+        const selectedOption = selector.querySelector('.selected-option');
+        selectedOption.querySelector('.color-box').style.backgroundColor = '#fff';
+        selectedOption.querySelector('span').innerText = '请选择颜色';
+        delete selectedOption.dataset.selectedColor;
+      });
+      document.getElementById('result-display').innerText = '';
+
+      // 重置电阻图片中的色环颜色
+      const bandOverlays = document.querySelectorAll('.band-overlay');
+      bandOverlays.forEach(band => {
+        band.style.backgroundColor = 'transparent';
+      });
+    }
+
+    // 从阻值计算色环
+    function calculateBandsFromValue() {
+      const resistanceInput = document.getElementById('resistance-input').value;
+      const unitMultiplier = parseInt(document.getElementById('unit-select').value);
+
+      if (!resistanceInput || resistanceInput <= 0) {
+        document.getElementById('bands-result').innerText = '请输入有效的阻值。';
+        return;
+      }
+
+      const bandCount = parseInt(document.querySelector('input[name="band-count"]:checked').value);
+
+      let resistanceValue = resistanceInput * unitMultiplier;
+
+      // 根据选择的色环类型决定有效数字的位数
+      const significantFigures = bandCount === 4 ? 2 : 3;
+
+      // 将阻值转换为科学计数法，便于提取有效数字和指数
+      const resistanceStr = resistanceValue.toExponential();
+
+      const [mantissaStr, exponentStr] = resistanceStr.split('e');
+      let mantissa = parseFloat(mantissaStr);
+      let exponent = parseInt(exponentStr);
+
+      // 调整有效数字
+      mantissa = mantissa * Math.pow(10, significantFigures - 1);
+      let digits = Math.round(mantissa);
+      exponent = exponent - (significantFigures - 1);
+
+      let digitsArray = digits.toString().split('').map(Number);
+
+      // 确保有效数字位数正确
+      if (digitsArray.length > significantFigures) {
+        digitsArray = digitsArray.slice(0, significantFigures);
+        exponent += digitsArray.length - significantFigures;
+      } else if (digitsArray.length < significantFigures) {
+        while (digitsArray.length < significantFigures) {
+          digitsArray.push(0);
+        }
+      }
+
+      // 获取色环颜色
+      let bandColors = [];
+
+      // 有效数字对应的色环
+      for (let i = 0; i < significantFigures; i++) {
+        const digit = digitsArray[i];
+        const colorObj = colorCodes.find(c => c.value === digit);
+        if (colorObj) {
+          bandColors.push(colorObj.color);
+        } else {
+          document.getElementById('bands-result').innerText = '无法计算对应的色环。';
+          return;
+        }
+      }
+
+      // 倍率对应的色环
+      const multiplierValue = Math.pow(10, exponent);
+      const multiplierObj = colorCodes.find(c => c.multiplier === multiplierValue);
+      if (multiplierObj) {
+        bandColors.push(multiplierObj.color);
+      } else {
+        document.getElementById('bands-result').innerText = '无法计算对应的色环。';
+        return;
+      }
+
+      // 误差色环（默认金色，±5%）
+      const toleranceColor = '金色';
+
+      bandColors.push(toleranceColor);
+
+      document.getElementById('bands-result').innerText = `对应的色环颜色：${bandColors.join('、')}`;
+
+      // 同步更新上方的色环选择器
+      updateBands();
+      const bandSelectors = document.querySelectorAll('.color-selector');
+      for (let i = 0; i < bandColors.length; i++) {
+        const colorName = bandColors[i];
+        selectColor(i, colorName);
+      }
+    }
+
+    // 点击页面其他地方关闭下拉菜单
+    document.addEventListener('click', function (e) {
+      const colorSelectors = document.querySelectorAll('.color-selector');
+      colorSelectors.forEach(selector => {
+        if (!selector.contains(e.target)) {
+          selector.querySelector('.options').style.display = 'none';
+        }
+      });
+    });
+
+    // 初始化
+    init();
+  </script>
+</body>
+
+</html>
