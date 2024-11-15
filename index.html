@@ -652,85 +652,73 @@
 
     // 从阻值计算色环
     function calculateBandsFromValue() {
-      const resistanceInput = document.getElementById('resistance-input').value;
-      const unitMultiplier = parseInt(document.getElementById('unit-select').value);
+    const resistanceInput = document.getElementById('resistance-input').value;
+    const unitMultiplier = parseInt(document.getElementById('unit-select').value);
 
-      if (!resistanceInput || resistanceInput <= 0) {
+    if (!resistanceInput || resistanceInput <= 0) {
         document.getElementById('bands-result').innerText = '请输入有效的阻值。';
         return;
-      }
+    }
 
-      const bandCount = parseInt(document.querySelector('input[name="band-count"]:checked').value);
+    const bandCount = parseInt(document.querySelector('input[name="band-count"]:checked').value);
 
-      let resistanceValue = resistanceInput * unitMultiplier;
+    let resistanceValue = resistanceInput * unitMultiplier;
 
-      // 根据选择的色环类型决定有效数字的位数
-      const significantFigures = bandCount === 4 ? 2 : 3;
+    const significantFigures = bandCount === 4 ? 2 : 3;
+    const resistanceStr = resistanceValue.toExponential();
+    const [mantissaStr, exponentStr] = resistanceStr.split('e');
+    let mantissa = parseFloat(mantissaStr);
+    let exponent = parseInt(exponentStr);
 
-      // 将阻值转换为科学计数法，便于提取有效数字和指数
-      const resistanceStr = resistanceValue.toExponential();
+    mantissa = mantissa * Math.pow(10, significantFigures - 1);
+    let digits = Math.round(mantissa);
+    exponent = exponent - (significantFigures - 1);
 
-      const [mantissaStr, exponentStr] = resistanceStr.split('e');
-      let mantissa = parseFloat(mantissaStr);
-      let exponent = parseInt(exponentStr);
-
-      // 调整有效数字
-      mantissa = mantissa * Math.pow(10, significantFigures - 1);
-      let digits = Math.round(mantissa);
-      exponent = exponent - (significantFigures - 1);
-
-      let digitsArray = digits.toString().split('').map(Number);
-
-      // 确保有效数字位数正确
-      if (digitsArray.length > significantFigures) {
+    let digitsArray = digits.toString().split('').map(Number);
+    if (digitsArray.length > significantFigures) {
         digitsArray = digitsArray.slice(0, significantFigures);
         exponent += digitsArray.length - significantFigures;
-      } else if (digitsArray.length < significantFigures) {
+    } else if (digitsArray.length < significantFigures) {
         while (digitsArray.length < significantFigures) {
-          digitsArray.push(0);
+            digitsArray.push(0);
         }
-      }
+    }
 
-      // 获取色环颜色
-      let bandColors = [];
-
-      // 有效数字对应的色环
-      for (let i = 0; i < significantFigures; i++) {
+    let bandColors = [];
+    for (let i = 0; i < significantFigures; i++) {
         const digit = digitsArray[i];
         const colorObj = colorCodes.find(c => c.value === digit);
         if (colorObj) {
-          bandColors.push(colorObj.color);
+            bandColors.push(colorObj.color);
         } else {
-          document.getElementById('bands-result').innerText = '无法计算对应的色环。';
-          return;
+            document.getElementById('bands-result').innerText = '无法计算对应的色环。';
+            return;
         }
-      }
+    }
 
-      // 倍率对应的色环
-      const multiplierValue = Math.pow(10, exponent);
-      const multiplierObj = colorCodes.find(c => c.multiplier === multiplierValue);
-      if (multiplierObj) {
+    const multiplierValue = Math.pow(10, exponent);
+    const multiplierObj = colorCodes.find(c => c.multiplier === multiplierValue);
+    if (multiplierObj) {
         bandColors.push(multiplierObj.color);
-      } else {
+    } else {
         document.getElementById('bands-result').innerText = '无法计算对应的色环。';
         return;
-      }
+    }
 
-      // 误差色环（默认棕色，±1%）
-      // const toleranceColor = '棕色';
-      const toleranceColor = bandCount === 4 ? '金色' : '棕色';
-      bandColors.push(toleranceColor);
+    // 设置误差色环：四色环为金色，五色环为棕色
+    const toleranceColor = bandCount === 4 ? '金色' : '棕色';
+    bandColors.push(toleranceColor);
 
-      document.getElementById('bands-result').innerText = `对应的色环颜色：${bandColors.join('、')}`;
-
-      // 同步更新上方的色环选择器
-      updateBands();
-      const bandSelectors = document.querySelectorAll('.color-selector');
-      for (let i = 0; i < bandColors.length; i++) {
+    document.getElementById('bands-result').innerText = `对应的色环颜色：${bandColors.join('、')}`;
+    
+    updateBands();
+    const bandSelectors = document.querySelectorAll('.color-selector');
+    for (let i = 0; i < bandColors.length; i++) {
         const colorName = bandColors[i];
         selectColor(i, colorName);
-      }
     }
+}
+
 
     // 点击页面其他地方关闭下拉菜单
     document.addEventListener('click', function (e) {
