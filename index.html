@@ -717,8 +717,8 @@
       }
 
       // 误差色环（默认棕色，±1%）
-      const toleranceColor = '棕色';
-
+      // const toleranceColor = '棕色';
+      const toleranceColor = bandCount === 4 ? '金色' : '棕色';
       bandColors.push(toleranceColor);
 
       document.getElementById('bands-result').innerText = `对应的色环颜色：${bandColors.join('、')}`;
