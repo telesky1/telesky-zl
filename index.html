@@ -652,8 +652,8 @@
 
     // 从阻值计算色环
     function calculateBandsFromValue() {
-    const resistanceInput = document.getElementById('resistance-input').value;
-    const unitMultiplier = parseInt(document.getElementById('unit-select').value);
+    const resistanceInput = parseFloat(document.getElementById('resistance-input').value);
+    const unitMultiplier = parseFloat(document.getElementById('unit-select').value);
 
     if (!resistanceInput || resistanceInput <= 0) {
         document.getElementById('bands-result').innerText = '请输入有效的阻值。';
@@ -661,63 +661,63 @@
     }
 
     const bandCount = parseInt(document.querySelector('input[name="band-count"]:checked').value);
+    const resistanceValue = resistanceInput * unitMultiplier;
 
-    let resistanceValue = resistanceInput * unitMultiplier;
+    // 确定有效数字数量（5色环为3位，4色环为2位）
+    const significantFigures = bandCount === 5 ? 3 : 2;
 
-    const significantFigures = bandCount === 4 ? 2 : 3;
+    // 科学计数法表示
     const resistanceStr = resistanceValue.toExponential();
     const [mantissaStr, exponentStr] = resistanceStr.split('e');
     let mantissa = parseFloat(mantissaStr);
     let exponent = parseInt(exponentStr);
 
+    // 调整有效数字
     mantissa = mantissa * Math.pow(10, significantFigures - 1);
     let digits = Math.round(mantissa);
     exponent = exponent - (significantFigures - 1);
 
-    let digitsArray = digits.toString().split('').map(Number);
+    const digitsArray = digits.toString().split('').map(Number);
     if (digitsArray.length > significantFigures) {
-        digitsArray = digitsArray.slice(0, significantFigures);
-        exponent += digitsArray.length - significantFigures;
-    } else if (digitsArray.length < significantFigures) {
-        while (digitsArray.length < significantFigures) {
-            digitsArray.push(0);
-        }
+        digitsArray.length = significantFigures;
     }
 
+    // 色环的数字部分
     let bandColors = [];
-    for (let i = 0; i < significantFigures; i++) {
-        const digit = digitsArray[i];
-        const colorObj = colorCodes.find(c => c.value === digit);
-        if (colorObj) {
-            bandColors.push(colorObj.color);
-        } else {
-            document.getElementById('bands-result').innerText = '无法计算对应的色环。';
+    for (let i = 0; i < digitsArray.length; i++) {
+        const colorObj = colorCodes.find(c => c.value === digitsArray[i]);
+        if (!colorObj) {
+            document.getElementById('bands-result').innerText = '无法计算对应的色环（数字部分）。';
             return;
         }
+        bandColors.push(colorObj.color);
     }
 
+    // 倍数色环的处理
     const multiplierValue = Math.pow(10, exponent);
     const multiplierObj = colorCodes.find(c => c.multiplier === multiplierValue);
-    if (multiplierObj) {
-        bandColors.push(multiplierObj.color);
-    } else {
-        document.getElementById('bands-result').innerText = '无法计算对应的色环。';
+
+    if (!multiplierObj) {
+        document.getElementById('bands-result').innerText = '无法计算对应的色环（倍数部分）。';
         return;
     }
+    bandColors.push(multiplierObj.color);
 
-    // 设置误差色环：四色环为金色，五色环为棕色
+    // 设置误差色环：四色环默认金色，五色环默认棕色
     const toleranceColor = bandCount === 4 ? '金色' : '棕色';
     bandColors.push(toleranceColor);
 
+    // 显示色环结果
     document.getElementById('bands-result').innerText = `对应的色环颜色：${bandColors.join('、')}`;
-    
+
+    // 自动更新色环显示
     updateBands();
     const bandSelectors = document.querySelectorAll('.color-selector');
     for (let i = 0; i < bandColors.length; i++) {
-        const colorName = bandColors[i];
-        selectColor(i, colorName);
+        selectColor(i, bandColors[i]);
     }
 }
+
 
 
     // 点击页面其他地方关闭下拉菜单
