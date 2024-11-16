@@ -377,6 +377,12 @@
     window.onload = function () {
       init();
       preloadImages();
+      // 添加事件监听器，使按下 Enter 键时计算色环
+      document.getElementById('resistance-input').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          calculateBandsFromValue();
+        }
+      });
     };
     // 定义颜色与数值的对应关系
     const colorCodes = [
@@ -653,7 +659,7 @@
     // 从阻值计算色环
     function calculateBandsFromValue() {
       const resistanceInput = document.getElementById('resistance-input').value;
-      const unitMultiplier = parseInt(document.getElementById('unit-select').value);
+      const unitMultiplier = parseFloat(document.getElementById('unit-select').value);
 
       if (!resistanceInput || resistanceInput <= 0) {
         document.getElementById('bands-result').innerText = '请输入有效的阻值。';
@@ -661,29 +667,49 @@
       }
 
       const bandCount = parseInt(document.querySelector('input[name="band-count"]:checked').value);
-
       let resistanceValue = resistanceInput * unitMultiplier;
-
       const significantFigures = bandCount === 4 ? 2 : 3;
-      const resistanceStr = resistanceValue.toExponential();
-      const [mantissaStr, exponentStr] = resistanceStr.split('e');
-      let mantissa = parseFloat(mantissaStr);
-      let exponent = parseInt(exponentStr);
 
-      mantissa = mantissa * Math.pow(10, significantFigures - 1);
-      let digits = Math.round(mantissa);
-      exponent = exponent - (significantFigures - 1);
+      let digitsArray = [];
+      let multiplierValue;
 
-      let digitsArray = digits.toString().split('').map(Number);
-      if (digitsArray.length > significantFigures) {
-        digitsArray = digitsArray.slice(0, significantFigures);
-        exponent += digitsArray.length - significantFigures;
-      } else if (digitsArray.length < significantFigures) {
+      if (resistanceValue < 1) {
+        // 当阻值小于1欧姆时，倍率固定为银色（×0.01）
+        multiplierValue = 0.01;
+        const scaledValue = resistanceValue / multiplierValue;
+        let digits = Math.round(scaledValue);
+        digitsArray = digits.toString().split('').map(Number);
+
+        // 确保数字数组有足够的有效位数，不足时在前面补零
         while (digitsArray.length < significantFigures) {
-          digitsArray.push(0);
+          digitsArray.unshift(0);
         }
+      } else {
+        // 原有逻辑处理阻值大于等于1欧姆的情况
+        const resistanceStr = resistanceValue.toExponential();
+        const [mantissaStr, exponentStr] = resistanceStr.split('e');
+        let mantissa = parseFloat(mantissaStr);
+        let exponent = parseInt(exponentStr);
+
+        mantissa = mantissa * Math.pow(10, significantFigures - 1);
+        let digits = Math.round(mantissa);
+        exponent = exponent - (significantFigures - 1);
+
+        digitsArray = digits.toString().split('').map(Number);
+
+        if (digitsArray.length > significantFigures) {
+          digitsArray = digitsArray.slice(0, significantFigures);
+          exponent += digitsArray.length - significantFigures;
+        } else if (digitsArray.length < significantFigures) {
+          while (digitsArray.length < significantFigures) {
+            digitsArray.push(0);
+          }
+        }
+
+        multiplierValue = Math.pow(10, exponent);
       }
 
+      // 获取色环颜色
       let bandColors = [];
       for (let i = 0; i < significantFigures; i++) {
         const digit = digitsArray[i];
@@ -696,7 +722,7 @@
         }
       }
 
-      const multiplierValue = Math.pow(10, exponent);
+      // 查找倍率色环对应的颜色
       const multiplierObj = colorCodes.find(c => c.multiplier === multiplierValue);
       if (multiplierObj) {
         bandColors.push(multiplierObj.color);
@@ -711,6 +737,7 @@
 
       document.getElementById('bands-result').innerText = `对应的色环颜色：${bandColors.join('、')}`;
 
+      // 更新色环选择器并显示结果
       updateBands();
       const bandSelectors = document.querySelectorAll('.color-selector');
       for (let i = 0; i < bandColors.length; i++) {
@@ -718,6 +745,7 @@
         selectColor(i, colorName);
       }
     }
+
 
 
     // 点击页面其他地方关闭下拉菜单
