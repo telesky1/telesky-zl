@@ -1,0 +1,283 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f5f5f5;
+}
+
+.top-banner {
+  width: 100%;
+  max-width: 990px;
+  margin: 0 auto;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.top-banner img {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+}
+
+h2 {
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upper-region {
+  display: flex;
+  flex-direction: column;
+  /* 设置为垂直方向排列 */
+  background-color: #fff;
+  padding: 30px 60px;
+  margin-bottom: 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 1000px;
+  max-width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.panel-container {
+  display: flex;
+  flex-direction: row;
+  /* 水平方向排列 */
+  margin-top: 20px;
+  /* 标题与面板之间的间距 */
+}
+
+.left-panel {
+  flex: 1;
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.right-panel {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* 左对齐 */
+  min-height: 400px;
+  /* 设置最小高度，固定右侧面板高度 */
+  position: relative;
+  /* 为了定位子元素 */
+}
+
+.band-type {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.band-type label {
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.band-type input {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+#color-selectors {
+  display: flex;
+  flex-direction: column;
+}
+
+.color-selector {
+  position: relative;
+  width: 250px;
+  margin-bottom: 15px;
+}
+
+.color-selector .selected-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.color-selector .selected-option .color-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+.color-selector .options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 250px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  z-index: 1;
+  display: none;
+}
+
+.color-selector .options .option {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.color-selector .options .option:hover {
+  background-color: #f0f0f0;
+}
+
+.color-selector .options .option .color-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+.result {
+  margin-top: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  white-space: pre-wrap;
+  text-align: center;
+  position: absolute;
+  /* 绝对定位 */
+  bottom: 150px;
+  /* 距离底部的距离 */
+  left: 0;
+  right: 0;
+}
+
+.value-to-color {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 1000px;
+  max-width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.value-to-color h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.value-to-color input,
+.value-to-color select {
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+
+}
+
+.value-to-color select {
+  cursor: pointer;
+  /* 使下拉框在悬停时显示为手指形状 */
+}
+
+.value-to-color button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#bands-result {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.resistor-image-container {
+  position: relative;
+  width: 300px;
+  height: 100px;
+  overflow: hidden;
+  margin-top: 20px;
+  margin: 100px auto;
+  /* 调整电阻图片的顶部间距 */
+}
+
+.resistor-image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 2;
+  /* 电阻图片位于上层 */
+}
+
+.band-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: transparent;
+  z-index: 1;
+  /* 色环覆盖层位于下层 */
+}
+
+@media screen and (max-width: 768px) {
+  .upper-region {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .panel-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left-panel {
+    margin-right: 0;
+  }
+
+  .right-panel {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 水平居中 */
+    justify-content: flex-start;
+    /* 内容从顶部开始排列 */
+  }
+
+  .content-area {
+    width: 90%;
+    padding: 20px;
+  }
+}
+
+/* 按钮容器样式 */
+.button-container {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+  /* 将按钮容器推到父容器底部 */
+}
+
+/* 统一按钮样式 */
+.button-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100px;
+  box-sizing: border-box;
+  /* 确保内边距和边框被计算在内 */
+}
+
+/* 为按钮之间添加间距 */
+.button-container button+button {
+  margin-left: 30px;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<!--我们的店铺：https://telesky.tmall.com/?search=y&keyword=%B5%E7%D7%E8 天猫 Telesky旗舰店 -->
+
+<head>
+  <meta charset="UTF-8">
+  <title>电阻阻值查询器</title>
+  <link rel="icon" href="天士凯LOGO.png" type="image/png">
+  <link rel="stylesheet" href="Style.css">
+
+</head>
+
+<body>
+  <div class="top-banner">
+    <a href="https://telesky.tmall.com/shop/view_shop.htm?tracelog=twddp&user_number_id=2207691322" target="_blank">
+      <img src="顶部LOGO.jpg" alt="Logo">
+    </a>
+  </div>
+  <!-- <h1>电阻阻值查询器</h1> -->
+
+  <div class="container">
+    <!-- 上部区域 -->
+    <div class="upper-region">
+      <!-- 标题 -->
+      <h2>电阻阻值查询器</h2>
+
+      <!-- 新增的面板容器 -->
+      <div class="panel-container">
+        <!-- 左侧区域：色环选择器 -->
+        <div class="left-panel">
+          <div class="band-type">
+            <label><input type="radio" name="band-count" value="4" checked onchange="updateBands()"> 四色环</label>
+            <label><input type="radio" name="band-count" value="5" onchange="updateBands()"> 五色环</label>
+          </div>
+
+          <div id="color-selectors">
+            <!-- 动态生成色环选择器 -->
+          </div>
+
+          <!-- 按钮容器 -->
+          <div class="button-container">
+            <!-- 选购按钮 -->
+            <button id="shop-button"
+              onclick="window.open('https://telesky.tmall.com/shop/view_shop.htm?tracelog=twddp&user_number_id=2207691322', '_blank')">选购</button>
+            <!-- 重置按钮 -->
+            <button id="reset-button" onclick="resetSelections()">重置</button>
+          </div>
+        </div>
+
+        <!-- 右侧区域：电阻图片和结果显示 -->
+        <div class="right-panel">
+          <div class="resistor-image-container" id="resistor-image-container">
+            <!-- 电阻图片和色环将显示在这里 -->
+          </div>
+          <div class="result" id="result-display">
+            <!-- 结果将显示在这里 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 阻值到色环计算 -->
+    <div class="value-to-color">
+      <h2>阻值转色环</h2>
+      <input type="number" id="resistance-input" placeholder="输入阻值">
+      <select id="unit-select">
+        <option value="1">Ω</option>
+        <option value="1000">kΩ</option>
+        <option value="1000000">MΩ</option>
+        <option value="1000000000">GΩ</option>
+      </select>
+      <button onclick="calculateBandsFromValue()">计算色环</button>
+      <div id="bands-result">
+        <!-- 色环结果将显示在这里 -->
+      </div>
+    </div>
+  </div>
+  <script src="Script.js"></script>
+
+</body>
+
+</html>
