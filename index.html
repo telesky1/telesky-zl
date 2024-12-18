@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-<!--我们的店铺：https://telesky.tmall.com/?search=y&keyword=%B5%E7%D7%E8 天猫 Telesky旗舰店 -->
-
 <head>
   <meta charset="UTF-8">
   <title>电阻阻值查询器</title>
   <link rel="icon" href="天士凯LOGO.png" type="image/png">
   <link rel="stylesheet" href="Style.css">
-
 </head>
 
 <body>
@@ -17,28 +14,34 @@
       <img src="顶部LOGO.jpg" alt="Logo">
     </a>
   </div>
-  <!-- <h1>电阻阻值查询器</h1> -->
 
   <div class="container">
-    <!-- 上部区域 -->
     <div class="upper-region">
-      <!-- 标题 -->
       <h2>电阻阻值查询器</h2>
 
-      <!-- 新增的面板容器 -->
       <div class="panel-container">
-        <!-- 左侧区域：色环选择器 -->
+        <!-- 左侧区域：色环选择器、功率计算 -->
         <div class="left-panel">
           <div class="band-type">
             <label><input type="radio" name="band-count" value="4" checked onchange="updateBands()"> 四色环</label>
             <label><input type="radio" name="band-count" value="5" onchange="updateBands()"> 五色环</label>
+            <label><input type="radio" name="band-count" value="power" onchange="updateBands()"> 功率查询</label>
           </div>
 
+          <!-- 色环选择器区域 -->
           <div id="color-selectors">
             <!-- 动态生成色环选择器 -->
           </div>
 
-          <!-- 按钮容器 -->
+          <!-- 功率查询区域（不需要标题和阴影） -->
+          <div class="power-container" id="power-container" style="display:none;">
+            <label>直径(mm): <input type="number" id="diameter-input" placeholder="输入直径"></label>
+            <label>长度(mm): <input type="number" id="length-input" placeholder="输入长度"></label>
+            <div id="power-result"></div>
+            <div id="power-size-info"></div>
+
+          </div>
+
           <div class="button-container">
             <!-- 选购按钮 -->
             <button id="shop-button"
@@ -48,15 +51,24 @@
           </div>
         </div>
 
-        <!-- 右侧区域：电阻图片和结果显示 -->
+        <!-- 右侧区域：电阻图片、阻值结果 -->
         <div class="right-panel">
           <div class="resistor-image-container" id="resistor-image-container">
-            <!-- 电阻图片和色环将显示在这里 -->
+            <!-- 原本电阻图片 -->
           </div>
-          <div class="result" id="result-display">
-            <!-- 结果将显示在这里 -->
+          <div class="result" id="result-display"></div>
+
+          <!-- 新增的功率图片分区容器（初始隐藏） -->
+          <div class="power-image-segments" id="power-image-segments" style="display:none;">
+            <div class="power-segment" data-power="1/4w"></div>
+            <div class="power-segment" data-power="1/2w"></div>
+            <div class="power-segment" data-power="1w"></div>
+            <div class="power-segment" data-power="2w"></div>
+            <div class="power-segment" data-power="3w"></div>
+            <div class="power-segment" data-power="5w"></div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -76,8 +88,8 @@
       </div>
     </div>
   </div>
-  <script src="Script.js"></script>
 
+  <script src="Script.js"></script>
 </body>
 
 </html>
